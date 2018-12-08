@@ -1,5 +1,6 @@
 #include <bitset>
 #include <string>
+#include <iomanip>
 #include <sstream>
 #include "deadbeef.h"
 
@@ -7,7 +8,7 @@ int cipher32b_WORD(uintptr_t input, std::string key, int& output)
 {
 
 	std::string hexkey			= "";
-	std::string xoredBinString		= "";
+	std::string xoredBinString	= "";
 	
 	stream2hex(key, hexkey, false);
 	std::bitset<32> binaryKeyRep= std::bitset<32>(std::stoul(hexkey, nullptr, 16));
@@ -79,4 +80,20 @@ void hex2stream(std::string hexstr, std::string& str)
 		str[i] = (hexstr[j] & '@' ? hexstr[j] + 9 : hexstr[j]) << 4, j++;
 		str[i] |= (hexstr[j] & '@' ? hexstr[j] + 9 : hexstr[j]) & 0xF;
 	}
+}
+
+std::string HexConverted(std::string strBinary)
+{
+	int result = 0;
+
+	for (size_t count = 0; count < strBinary.length(); ++count)
+	{
+		result *= 2;
+		result += strBinary[count] == '1' ? 1 : 0;
+	}
+
+	std::stringstream ss;
+	ss << "0x" << std::hex << std::setw(8) << std::setfill('0') << result;
+
+	return ss.str();
 }
