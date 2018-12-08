@@ -7,7 +7,7 @@ int main() {
 
 	auto exampleHex					= 0x000fffff;
 	std::string	four_byte_key		= "keya";
-	int output						= NULL;
+	std::string output;
 
 	cipher32b_WORD(exampleHex, four_byte_key, output);
 	printf(" Im ciphering %p with key %s ---> %i", (uintptr_t)exampleHex, four_byte_key, output);
