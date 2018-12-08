@@ -1,14 +1,16 @@
 #include <bitset>
 #include <string>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 #include "deadbeef.h"
 
-int cipher32b_WORD(uintptr_t input, std::string key, int& output)
+void cipher32b_WORD(uintptr_t input, std::string key, std::string& output)
 {
 
 	std::string hexkey			= "";
 	std::string xoredBinString	= "";
+	std::string xoredHexString	= "";
 	
 	stream2hex(key, hexkey, false);
 	std::bitset<32> binaryKeyRep= std::bitset<32>(std::stoul(hexkey, nullptr, 16));
@@ -26,36 +28,51 @@ int cipher32b_WORD(uintptr_t input, std::string key, int& output)
 				xoredBinString.append("0");
 			else
 				xoredBinString.append("1");
-
 			//printf("-  string: %c key: %c xor: %c\n", stringRep.at(i), stringKeyRep.at(i), xoredString.at(i));
 
 		}
-
-		for (int i = 0; i < xoredBinString.length(); ++i) {
-/*
-			if ((i + 1) % 4 == 0) {
-				//convert 4 temp binaries to hex
-			}
-			else {
-			
 				
-			
-			}
-			//printf("-  string: %c key: %c xor: %c\n", stringRep.at(i), stringKeyRep.at(i), xoredString.at(i));
-*/
-		}
+		xoredHexString = strBin2hex(xoredBinString);
 		
-		std::bitset<32> binaryXoredRep = std::bitset<32>(xoredBinString);
 	}
 
-
-
-	printf(" %p ----> %s", binaryRep, stringRep);
-	return input;
-
-
-
+	//std::cout << xoredHexString;
 }
+
+void decipher32b_WORD(std::string input, std::string key, std::string& output)
+{
+
+	std::string hexkey = "";
+	std::string xoredBinString = "";
+	std::string xoredHexString = "";
+
+	stream2hex(key, hexkey, false);
+	std::bitset<32> binaryKeyRep = std::bitset<32>(std::stoul(hexkey, nullptr, 16));
+	std::string stringKeyRep = binaryKeyRep.to_string();
+
+	std::bitset<32> binaryRep = std::bitset<32>(input);
+	std::string stringRep = binaryRep.to_string();
+
+
+	if (stringRep.length() == stringKeyRep.length()) {
+
+		for (int i = 0; i < stringRep.length(); ++i) {
+
+			if (stringRep.at(i) == stringKeyRep.at(i))
+				xoredBinString.append("0");
+			else
+				xoredBinString.append("1");
+			//printf("-  string: %c key: %c xor: %c\n", stringRep.at(i), stringKeyRep.at(i), xoredString.at(i));
+
+		}
+
+		xoredHexString = strBin2hex(xoredBinString);
+
+	}
+
+	//std::cout << xoredHexString;
+}
+
 
 // Convert string of chars to its representative string of hex numbers
 void stream2hex(const std::string str, std::string& hexstr, bool capital = false)
@@ -82,7 +99,7 @@ void hex2stream(std::string hexstr, std::string& str)
 	}
 }
 
-std::string HexConverted(std::string strBinary)
+std::string strBin2hex(std::string strBinary)
 {
 	int result = 0;
 
@@ -94,6 +111,6 @@ std::string HexConverted(std::string strBinary)
 
 	std::stringstream ss;
 	ss << "0x" << std::hex << std::setw(8) << std::setfill('0') << result;
-
+	
 	return ss.str();
 }
